@@ -67,7 +67,7 @@
          auto-package-update-interval 4)
    (auto-package-update-maybe))
 
-;; (setq global-visual-line-mode t)
+(setq global-visual-line-mode t)
 
 ;;resizing windows
 (global-set-key (kbd "S-C-<left>")  'shrink-window-horizontally)
@@ -246,14 +246,15 @@
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((emacs-lisp . t)
-   (python . t)
-   (ledger . t)))
+   (python . t)))
+   ;; (ledger . t)))
 
 (setq org-confirm-babel-evaluate nil)
 
 
 
 ;; tempo --------------- this auto generates code blocks with <sh and hit tab.
+
 (require 'org-tempo)
     (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
     (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
@@ -264,6 +265,7 @@
 
 
 ;; org-reveal configurations. Presentations -----------------------------------
+
 (use-package ox-reveal
   :ensure ox-reveal)
 (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js")
@@ -278,7 +280,10 @@
 (add-hook 'org-mode-hook 'flyspell-mode)
 
 
-
+;; Spell check  ----------------------------------------------------------------
+(use-package org-onenote
+  :ensure org-onenote)
+(setq org-onenote-section-map '(("lab notes/org test" . "0-8295D8A7F568EB8C!334") ("mathieu's Notebook/Quick Notes" . "0-8295D8A7F568EB8C!131") ("org test/test" . "0-8295D8A7F568EB8C!330")))
 ;; Language server protocol ----------------------------------------------------
 
 (defun efs/lsp-mode-setup ()
@@ -442,7 +447,7 @@
  ;; If there is more than one, they won't work right.
  '(ispell-dictionary nil)
  '(package-selected-packages
-   '(ox-reveal undo-tree auto-package-update dired-hide-dotfiles dired-open all-the-icons-dired dired-single company-box pyvenv dap-mode lsp-pyright python-mode lsp-ivy lsp-ui lsp-mode yasnippet which-key visual-fill-column use-package rainbow-delimiters org-bullets ivy-rich hydra helpful general forge evil-collection doom-themes doom-modeline counsel-projectile command-log-mode auctex all-the-icons)))
+   '(org-onenote ox-reveal undo-tree auto-package-update dired-hide-dotfiles dired-open all-the-icons-dired dired-single company-box pyvenv dap-mode lsp-pyright python-mode lsp-ivy lsp-ui lsp-mode yasnippet which-key visual-fill-column use-package rainbow-delimiters org-bullets ivy-rich hydra helpful general forge evil-collection doom-themes doom-modeline counsel-projectile command-log-mode auctex all-the-icons)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
