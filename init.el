@@ -67,14 +67,19 @@
          auto-package-update-interval 4)
    (auto-package-update-maybe))
 
-(setq global-visual-line-mode t)
+(global-visual-line-mode t)
 
-;;resizing windows
+;; resizing windows.
 (global-set-key (kbd "S-C-<left>")  'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "S-C-<down>")  'shrink-window)
 (global-set-key (kbd "S-C-<up>")    'enlarge-window)
 
+;; For org mode to override default
+(define-key org-mode-map (kbd "S-C-<left>") 'shrink-window-horizontally)
+(define-key org-mode-map (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(define-key org-mode-map (kbd "S-C-<down>") 'shrink-window)
+(define-key org-mode-map (kbd "S-C-<up>") 'enlarge-window)
 
 
 ;; Ivy Configuration -----------------------------------------------------------
@@ -280,10 +285,11 @@
 (add-hook 'org-mode-hook 'flyspell-mode)
 
 
-;; Spell check  ----------------------------------------------------------------
+;; Org-onenote  ----------------------------------------------------------------
 (use-package org-onenote
   :ensure org-onenote)
-(setq org-onenote-section-map '(("lab notes/org test" . "0-8295D8A7F568EB8C!334") ("mathieu's Notebook/Quick Notes" . "0-8295D8A7F568EB8C!131") ("org test/test" . "0-8295D8A7F568EB8C!330")))
+(setq org-onenote-section-map '(("lab notes/anti_helmholtz_cavity" . "0-8295D8A7F568EB8C!380") ("mathieu's Notebook/Quick Notes" . "0-8295D8A7F568EB8C!131") ("org test/test" . "0-8295D8A7F568EB8C!330") ("lab notes/tunable_resonator" . "0-8295D8A7F568EB8C!384")))
+
 ;; Language server protocol ----------------------------------------------------
 
 (defun efs/lsp-mode-setup ()
