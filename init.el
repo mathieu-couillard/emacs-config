@@ -69,18 +69,6 @@
 
 (global-visual-line-mode t)
 
-;; resizing windows.
-(global-set-key (kbd "S-C-<left>")  'shrink-window-horizontally)
-(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
-(global-set-key (kbd "S-C-<down>")  'shrink-window)
-(global-set-key (kbd "S-C-<up>")    'enlarge-window)
-
-;; For org mode to override default
-(define-key org-mode-map (kbd "S-C-<left>") 'shrink-window-horizontally)
-(define-key org-mode-map (kbd "S-C-<right>") 'enlarge-window-horizontally)
-(define-key org-mode-map (kbd "S-C-<down>") 'shrink-window)
-(define-key org-mode-map (kbd "S-C-<up>") 'enlarge-window)
-
 
 ;; Ivy Configuration -----------------------------------------------------------
 
@@ -188,6 +176,8 @@
   :config
   (evil-collection-init))
 
+
+
 (use-package hydra)
 
 (defhydra hydra-text-scale (:timeout 4)
@@ -288,7 +278,8 @@
 ;; Org-onenote  ----------------------------------------------------------------
 (use-package org-onenote
   :ensure org-onenote)
-(setq org-onenote-section-map '(("lab notes/anti_helmholtz_cavity" . "0-8295D8A7F568EB8C!380") ("mathieu's Notebook/Quick Notes" . "0-8295D8A7F568EB8C!131") ("org test/test" . "0-8295D8A7F568EB8C!330") ("lab notes/tunable_resonator" . "0-8295D8A7F568EB8C!384")))
+(setq org-onenote-section-map '(("lab notes/anti_helmholtz_cavity" . "0-8295D8A7F568EB8C!380") ("lab notes/tunable_resonator" . "0-8295D8A7F568EB8C!384")))
+;; Delete the .emacs/org-onenote-oauth2.plstore file before authentificating
 
 ;; Language server protocol ----------------------------------------------------
 
@@ -445,6 +436,24 @@
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
+
+;; resizing windows.
+(global-set-key (kbd "S-C-<left>")  'shrink-window-horizontally)
+(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "S-C-<down>")  'shrink-window)
+(global-set-key (kbd "S-C-<up>")    'enlarge-window)
+
+;; For org mode to override default
+(define-key org-mode-map (kbd "S-C-<left>") 'shrink-window-horizontally)
+(define-key org-mode-map (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(define-key org-mode-map (kbd "S-C-<down>") 'shrink-window)
+(define-key org-mode-map (kbd "S-C-<up>") 'enlarge-window)
+
+;; Org pretty, show LaTeX
+;; (org-pretty-entities t)
+
+;; org more directory hyperlink open nautilus
+(setq org-file-apps (cons '(directory . "nautilus file://%s") org-file-apps))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
