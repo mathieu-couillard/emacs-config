@@ -307,6 +307,22 @@
 
 (use-package lsp-ivy)
 
+
+;; Company ---------------------------------------------------------------------
+(use-package company
+  :ensure t
+  :init
+  (add-hook 'after-init-hook 'global-company-mode))
+
+
+;; Flycheck --------------------------------------------------------------------
+(use-package flycheck
+  :ensure t
+  :init
+  (global-flycheck-mode))
+
+
+
 ;; Debugger dap ----------------------------------------------------------------
 
 (use-package dap-mode
@@ -462,7 +478,7 @@
  ;; If there is more than one, they won't work right.
  '(ispell-dictionary nil)
  '(package-selected-packages
-   '(org-onenote ox-reveal undo-tree auto-package-update dired-hide-dotfiles dired-open all-the-icons-dired dired-single company-box pyvenv dap-mode lsp-pyright python-mode lsp-ivy lsp-ui lsp-mode yasnippet which-key visual-fill-column use-package rainbow-delimiters org-bullets ivy-rich hydra helpful general forge evil-collection doom-themes doom-modeline counsel-projectile command-log-mode auctex all-the-icons)))
+   '(flycheck org-onenote ox-reveal undo-tree auto-package-update dired-hide-dotfiles dired-open all-the-icons-dired dired-single company-box pyvenv dap-mode lsp-pyright python-mode lsp-ivy lsp-ui lsp-mode yasnippet which-key visual-fill-column use-package rainbow-delimiters org-bullets ivy-rich hydra helpful general forge evil-collection doom-themes doom-modeline counsel-projectile command-log-mode auctex all-the-icons)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
