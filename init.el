@@ -1,4 +1,3 @@
-
 ;; Basic UI Configuration ------------------------------------------------------
 
 ;; You will most likely need to adjust this font size for your system!
@@ -176,8 +175,6 @@
   :config
   (evil-collection-init))
 
-
-
 (use-package hydra)
 
 (defhydra hydra-text-scale (:timeout 4)
@@ -259,7 +256,7 @@
     (add-to-list 'org-structure-template-alist '("json" . "src json"))
 
 
-;; org-reveal configurations. Presentations -----------------------------------
+;; org-reveal configurations. Make slide show presentations -----------------------------------
 
 (use-package ox-reveal
   :ensure ox-reveal)
@@ -283,113 +280,103 @@
 
 ;; Language server protocol ----------------------------------------------------
 
-(defun efs/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-  (lsp--session nil)
-  (lsp-headerline-breadcrumb-mode))
-
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :hook (lsp-mode . efs/lsp-mode-setup)
-  :init
-  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-  :config
-  (lsp-enable-which-key-integration t))
-
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
-  :custom
-  (lsp-ui-doc-position 'bottom))
+;; (defun efs/lsp-mode-setup ()
+;;   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+;;   (lsp--session nil)
+;;   (lsp-headerline-breadcrumb-mode))
 
 
+;; (use-package lsp-mode
+;;   :commands (lsp lsp-deferred)
+;;   :hook (lsp-mode . efs/lsp-mode-setup)
+;;   :init
+;;   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+;;   :config
+;;   (lsp-enable-which-key-integration t))
 
-(use-package lsp-treemacs
-  :after lsp)
+;; (use-package lsp-ui
+;;   :hook (lsp-mode . lsp-ui-mode)
+;;   :custom
+;;   (lsp-ui-doc-position 'bottom))
 
-(use-package lsp-ivy)
+
+
+
+;; (use-package lsp-ivy
+;;   :ensure t)
 
 
 ;; Company ---------------------------------------------------------------------
+
 (use-package company
   :ensure t
   :init
   (add-hook 'after-init-hook 'global-company-mode))
 
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+
+
 
 ;; Flycheck --------------------------------------------------------------------
+;; Not supported in Eglot I think
 (use-package flycheck
   :ensure t
   :init
   (global-flycheck-mode))
 
-
-
-;; Debugger dap ----------------------------------------------------------------
-
-(use-package dap-mode
-  ;; Uncomment the config below if you want all UI panes to be hidden by default!
-  ;; :custom
-  ;; (lsp-enable-dap-auto-configure nil)
-  ;; :config
-  ;; (dap-ui-mode 1)
-
-  :config
-  ;; Set up Node debugging
-  (require 'dap-node)
-  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
-
-  ;; Bind `C-c l d` to `dap-hydra` for easy access
-  (general-define-key
-    :keymaps 'lsp-mode-map
-    :prefix lsp-keymap-prefix
-    "d" '(dap-hydra t :wk "debugger")))
-
-
 ;; Python ----------------------------------------------------------------------
 
-(use-package python-mode
+
+(setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/.pyenv/shims/")))
+(setq exec-path (append exec-path (list (expand-file-name "~/.pyenv/shims/"))))
+
+;; Open python files in tree-sitter mode.
+(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+
+(use-package eglot
   :ensure t
-  :hook (python-mode . lsp-deferred)
-  :custom
-  ;; NOTE: Set these if Python 3 is called "python3" on your system!
-  ;; (python-shell-interpreter "python3")
-  ;; (dap-python-executable "python3")
-  (dap-python-debugger 'debugpy)
+  :defer t
+  :bind (:map eglot-mode-map
+	      ("C-c C-d" . eldoc)
+              ("C-c C-e" . eglot-rename)
+              ("C-c C-o" . python-sort-imports)
+              ("C-c C-f" . eglot-format-buffer))
+  :hook ((python-ts-mode . eglot-ensure)
+         (python-ts-mode . flyspell-prog-mode)
+         (python-ts-mode . superword-mode)
+         (python-ts-mode . hs-minor-mode)
+         (python-ts-mode . (lambda () (set-fill-column 88))))
   :config
-  (require 'dap-python))
+  (setq-default eglot-workspace-configuration
+                '((:pylsp . (:configurationSources ["flake8"]
+                             :plugins (
+                                       :pycodestyle (:enabled :json-false)
+                                       :mccabe (:enabled :json-false)
+                                       :pyflakes (:enabled :json-false)
+                                       :flake8 (:enabled :json-false
+                                                :maxLineLength 88)
+                                       :ruff (:enabled t
+                                              :lineLength 88)
+                                       :pydocstyle (:enabled t
+                                                    :convention "numpy")
+                                       :yapf (:enabled :json-false)
+                                       :autopep8 (:enabled :json-false)
+                                       :black (:enabled t
+                                               :line_length 88
+                                               :cache_config t)))))))
 
-(use-package pyvenv
-  :config
-  (pyvenv-mode 1))
 
 
-(use-package lsp-pyright
-  :ensure t
-  :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
 
 
-(setq python-shell-interpreter "python3.11")
+
+(setq python-shell-interpreter "python3.12")
 (setq python-shell-interpreter-args "-m IPython")
 (setq python-shell-completion-native-enable nil)
-(add-hook 'python-mode-hook (lambda ()
-             (setq-local compile-command (format "python3.11 %s" buffer-file-name))))
+(add-hook 'python-ts-mode-hook (lambda ()
+             (setq-local compile-command (format "python3.12 %s" buffer-file-name))))
 
-
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
-  :custom
-  (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
-
-(use-package company-box
-  :hook (company-mode . company-box-mode))
 
 
 
@@ -452,7 +439,16 @@
  ;; If there is more than one, they won't work right.
  '(ispell-dictionary nil)
  '(package-selected-packages
-   '(flycheck org-onenote ox-reveal undo-tree auto-package-update dired-hide-dotfiles dired-open all-the-icons-dired dired-single company-box pyvenv dap-mode lsp-pyright python-mode lsp-ivy lsp-ui lsp-mode yasnippet which-key visual-fill-column use-package rainbow-delimiters org-bullets ivy-rich hydra helpful general forge evil-collection doom-themes doom-modeline counsel-projectile command-log-mode auctex all-the-icons)))
+   '(all-the-icons-dired auctex auto-package-update command-log-mode
+			 company-box counsel-projectile dap-mode
+			 dired-hide-dotfiles dired-open doom-modeline
+			 doom-themes eglot evil-collection
+			 exec-path-from-shell flycheck forge general
+			 helpful ivy-rich lsp-ivy lsp-pyright
+			 org-bullets org-onenote ox-reveal python-mode
+			 pyvenv rainbow-delimiters treemacs treepy
+			 undo-tree use-package visual-fill-column
+			 which-key yasnippet)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
