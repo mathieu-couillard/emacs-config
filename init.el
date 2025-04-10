@@ -71,9 +71,22 @@
 
 ;; Ivy Configuration -----------------------------------------------------------
 
+
+(defun swiper-isearch-region ()
+  "If region isn't selected, `swiper-isearch'.
+If region is selected, `swiper-isearch-thing-at-point'."
+  (interactive)
+  (if (not (use-region-p))
+      (swiper-isearch))
+  (swiper-isearch-thing-at-point))
+
+
+
 (use-package ivy
   :diminish
   :bind (("C-s" . swiper)
+	 ("C-M-s" . swiper-thing-at-point)
+	 ("C-S" . swiper-isearch-region)
          :map ivy-minibuffer-map
          ("TAB" . ivy-alt-done)
          ("C-l" . ivy-alt-done)
@@ -266,10 +279,13 @@
 
 ;; Spell check  ----------------------------------------------------------------
 
-(dolist (hook '(text-mode-hook))
-  (add-hook hook (lambda () (flyspell-mode 1))))
+(require 'flyspell)
 
-(add-hook 'org-mode-hook 'flyspell-mode)
+(setq ispell-list-command "--list") ;; run flyspell with aspell, not ispell
+;;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+;;(global-set-key [(control c) (f)] 'flyspell-check-previous-highlighted-word)
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
 
 ;; Org-onenote  ----------------------------------------------------------------
@@ -359,7 +375,7 @@
                                        :ruff (:enabled t
                                               :lineLength 88)
                                        :pydocstyle (:enabled t
-                                                    :convention "numpy")
+                                                    :convention "google")
                                        :yapf (:enabled :json-false)
                                        :autopep8 (:enabled :json-false)
                                        :black (:enabled t
