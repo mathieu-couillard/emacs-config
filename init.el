@@ -72,21 +72,21 @@
 ;; Ivy Configuration -----------------------------------------------------------
 
 
-(defun swiper-isearch-region ()
-  "If region isn't selected, `swiper-isearch'.
-If region is selected, `swiper-isearch-thing-at-point'."
-  (interactive)
-  (if (not (use-region-p))
-      (swiper-isearch))
-  (swiper-isearch-thing-at-point))
+;; (defun swiper-isearch-region ()
+;;   "If region isn't selected, `swiper-isearch'.
+;; If region is selected, `swiper-isearch-thing-at-point'."
+;;   (interactive)
+;;   (if (not (use-region-p))
+;;       (swiper-isearch))
+;;   (swiper-isearch-thing-at-point))
 
 
 
 (use-package ivy
   :diminish
-  :bind (("C-s" . swiper)
+  :bind (;;("C-S" . swiper-isearch-region)
+	 ("C-s" . swiper)
 	 ("C-M-s" . swiper-thing-at-point)
-	 ("C-S" . swiper-isearch-region)
          :map ivy-minibuffer-map
          ("TAB" . ivy-alt-done)
          ("C-l" . ivy-alt-done)
