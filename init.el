@@ -5,6 +5,11 @@
 
 (setq inhibit-startup-message t)
 
+(cond ((eq system-type 'windows-nt)
+       ;; Windows-specific code goes here.     (prefer-coding-system 'utf-8-unix)
+       (setq coding-system-for-read 'utf-8-unix)
+       (setq coding-system-for-write 'utf-8-unix)))
+
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (tool-bar-mode -1)          ; Disable the toolbar
 (tooltip-mode -1)           ; Disable tooltips
