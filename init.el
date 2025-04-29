@@ -441,6 +441,11 @@
 (global-set-key (kbd "S-C-<down>")  'shrink-window)
 (global-set-key (kbd "S-C-<up>")    'enlarge-window)
 
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
 ;; For org mode to override default
 (define-key org-mode-map (kbd "S-C-<left>") 'shrink-window-horizontally)
 (define-key org-mode-map (kbd "S-C-<right>") 'enlarge-window-horizontally)
