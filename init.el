@@ -57,7 +57,7 @@
    (package-install 'use-package))
 
 (require 'use-package)
-(setq use-package-always-ensure nil) ;; set this to t if things stop working
+(setq use-package-always-ensure t) ;; set this to t if things stop working
 
 (column-number-mode)
 (global-display-line-numbers-mode t)
