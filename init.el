@@ -65,7 +65,6 @@
 (use-package command-log-mode)
 
 (use-package auto-package-update
-   :ensure t
    :config
    (setq auto-package-update-delete-old-versions t
          auto-package-update-interval 4)
@@ -77,20 +76,10 @@
 ;; Ivy Configuration -----------------------------------------------------------
 
 
-;; (defun swiper-isearch-region ()
-;;   "If region isn't selected, `swiper-isearch'.
-;; If region is selected, `swiper-isearch-thing-at-point'."
-;;   (interactive)
-;;   (if (not (use-region-p))
-;;       (swiper-isearch))
-;;   (swiper-isearch-thing-at-point))
-
-
-
 (use-package ivy
+  :after evil
   :diminish
-  :bind (;;("C-S" . swiper-isearch-region)
-	 ("C-s" . swiper)
+  :bind (("C-s" . swiper)
 	 ("C-M-s" . swiper-thing-at-point)
          :map ivy-minibuffer-map
          ("TAB" . ivy-alt-done)
@@ -112,6 +101,7 @@
 ;; display correctly:
 ;;
 ;; M-x all-the-icons-install-fonts
+
 
 (use-package all-the-icons)
 
@@ -169,6 +159,7 @@
     "t"  '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")))
 
+
 (use-package evil
   :init
   (setq evil-want-integration t)
@@ -188,11 +179,12 @@
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal))
 
+
+
 (use-package evil-collection
   :after evil
   :config
   (evil-collection-init))
-
 (use-package hydra)
 
 (defhydra hydra-text-scale (:timeout 4)
@@ -204,10 +196,13 @@
 (rune/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
+
+
+
+
 ;; Undo-tree
 
 (use-package undo-tree
-  :ensure t
   :config
   (global-undo-tree-mode 1))
 
@@ -231,7 +226,6 @@
 ;; LATEX configuration ---------------------------------------------------------
 
 (use-package auctex
-  :ensure t
   :defer t)
 
 (add-hook 'LaTeX-mode-hook 
@@ -243,12 +237,9 @@
 ;; Yasnippet configuration ----------------------------------------------------
 
 (use-package yasnippet
-  :ensure t
   :config
   (yas-global-mode 1))
 
-
-;; cirriculum vitae configuration ---------------------------------------------
 
 
 ;; babel ----------------------------------------------------------------------
@@ -257,10 +248,8 @@
  'org-babel-load-languages
  '((emacs-lisp . t)
    (python . t)))
-   ;; (ledger . t)))
 
 (setq org-confirm-babel-evaluate nil)
-
 
 
 ;; tempo --------------- this auto generates code blocks with <sh and hit tab.
@@ -299,38 +288,10 @@
 (setq org-onenote-section-map '(("lab notes/anti_helmholtz_cavity" . "0-8295D8A7F568EB8C!380") ("lab notes/tunable_resonator" . "0-8295D8A7F568EB8C!384")))
 ;; Delete the .emacs/org-onenote-oauth2.plstore file before authentificating
 
-;; Language server protocol ----------------------------------------------------
-
-;; (defun efs/lsp-mode-setup ()
-;;   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-;;   (lsp--session nil)
-;;   (lsp-headerline-breadcrumb-mode))
-
-
-;; (use-package lsp-mode
-;;   :commands (lsp lsp-deferred)
-;;   :hook (lsp-mode . efs/lsp-mode-setup)
-;;   :init
-;;   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-;;   :config
-;;   (lsp-enable-which-key-integration t))
-
-;; (use-package lsp-ui
-;;   :hook (lsp-mode . lsp-ui-mode)
-;;   :custom
-;;   (lsp-ui-doc-position 'bottom))
-
-
-
-
-;; (use-package lsp-ivy
-;;   :ensure t)
-
 
 ;; Company ---------------------------------------------------------------------
 
 (use-package company
-  :ensure t
   :init
   (add-hook 'after-init-hook 'global-company-mode))
 
@@ -338,11 +299,9 @@
   :hook (company-mode . company-box-mode))
 
 
-
 ;; Flycheck --------------------------------------------------------------------
 ;; Not supported in Eglot I think
 (use-package flycheck
-  :ensure t
   :init
   (global-flycheck-mode))
 
@@ -356,7 +315,6 @@
 (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
 (use-package eglot
-  :ensure t
   :defer t
   :bind (:map eglot-mode-map
 	      ("C-c C-d" . eldoc)
@@ -458,6 +416,8 @@
 ;; org more directory hyperlink open nautilus
 (setq org-file-apps (cons '(directory . "nautilus file://%s") org-file-apps))
 
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -468,13 +428,11 @@
    '(all-the-icons-dired auctex auto-package-update command-log-mode
 			 company-box counsel-projectile dap-mode
 			 dired-hide-dotfiles dired-open doom-modeline
-			 doom-themes eglot evil-collection
-			 exec-path-from-shell flycheck forge general
-			 helpful ivy-rich lsp-ivy lsp-pyright
-			 org-bullets org-onenote ox-reveal python-mode
-			 pyvenv rainbow-delimiters treemacs treepy
-			 undo-tree use-package visual-fill-column
-			 which-key yasnippet)))
+			 doom-themes eglot evil-collection flycheck
+			 general helpful ivy-rich lsp-ivy lsp-pyright
+			 lsp-ui org-bullets org-onenote ox-reveal
+			 python-mode pyvenv rainbow-delimiters
+			 undo-tree use-package which-key yasnippet)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
