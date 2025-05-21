@@ -7,7 +7,7 @@
 
 (cond ((eq system-type 'windows-nt)
        ;; Windows-specific code goes here.
-       ;; Should be managed in .gitconfig
+       ;; Should be managed in .gitconfig.
        (prefer-coding-system 'utf-8-unix)
        (setq coding-system-for-read 'utf-8-unix)
        (setq coding-system-for-write 'utf-8-unix)))
