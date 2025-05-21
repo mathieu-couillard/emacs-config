@@ -1,4 +1,3 @@
- -*- coding: utf-8-unix -*-
 ;; Basic UI Configuration ------------------------------------------------------
 
 ;; You will most likely need to adjust this font size for your system!
