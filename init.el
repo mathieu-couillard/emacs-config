@@ -1,3 +1,4 @@
+ -*- coding: utf-8-unix -*-
 ;; Basic UI Configuration ------------------------------------------------------
 
 ;; You will most likely need to adjust this font size for your system!
@@ -8,6 +9,7 @@
 (cond ((eq system-type 'windows-nt)
        ;; Windows-specific code goes here.
        (prefer-coding-system 'utf-8-unix)
+       (set-language-environment 'utf-8)
        (setq coding-system-for-read 'utf-8-unix)
        (setq coding-system-for-write 'utf-8-unix)))
 
