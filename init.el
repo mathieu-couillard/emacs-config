@@ -307,7 +307,12 @@
 
 ;; Python ----------------------------------------------------------------------
 
-
+;; To manually switch to a new virtual environment
+(use-package pyvenv
+  :config
+  (pyvenv-mode t)
+  
+;; This is for Eglot
 (setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/.pyenv/shims/")))
 (setq exec-path (append exec-path (list (expand-file-name "~/.pyenv/shims/"))))
 
