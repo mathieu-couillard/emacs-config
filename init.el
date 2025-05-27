@@ -6,9 +6,7 @@
 (setq inhibit-startup-message t)
 
 (cond ((eq system-type 'windows-nt)
-       ;; Windows-specific code goes here.
-       ;; Should be managed in .gitconfig.
-       (prefer-coding-system 'utf-8-unix)
+       ;; Windows-specific code goes here.     (prefer-coding-system 'utf-8-unix)
        (setq coding-system-for-read 'utf-8-unix)
        (setq coding-system-for-write 'utf-8-unix)))
 
@@ -242,6 +240,23 @@
   :config
   (yas-global-mode 1))
 
+;; Make bullets look nice
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+;; For org mode to override default
+(define-key org-mode-map (kbd "S-C-<left>") 'shrink-window-horizontally)
+(define-key org-mode-map (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(define-key org-mode-map (kbd "S-C-<down>") 'shrink-window)
+(define-key org-mode-map (kbd "S-C-<up>") 'enlarge-window)
+
+;; Org pretty, show LaTeX
+(setq org-pretty-entities 1)
+
+;; org more directory hyperlink open nautilus
+(setq org-file-apps (cons '(directory . "nautilus file://%s") org-file-apps))
 
 
 ;; babel ----------------------------------------------------------------------
@@ -310,10 +325,10 @@
 ;; Python ----------------------------------------------------------------------
 
 ;; To manually switch to a new virtual environment
-(use-package pyvenv
-  :config
-  (pyvenv-mode t)
+;; (use-package pyvenv
+;;   :defer t
   
+ 
 ;; This is for Eglot
 (setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/.pyenv/shims/")))
 (setq exec-path (append exec-path (list (expand-file-name "~/.pyenv/shims/"))))
@@ -406,22 +421,87 @@
 (global-set-key (kbd "S-C-<down>")  'shrink-window)
 (global-set-key (kbd "S-C-<up>")    'enlarge-window)
 
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+;; Directional window-selection routines
+(use-package windmove
+  :ensure nil
+  :bind*
+  (("S-<left>" . windmove-left)
+   ("S-<right>" . windmove-right)
+   ("S-<up>" . windmove-up)
+   ("S-<down>" . windmove-down)))
 
-;; For org mode to override default
-(define-key org-mode-map (kbd "S-C-<left>") 'shrink-window-horizontally)
-(define-key org-mode-map (kbd "S-C-<right>") 'enlarge-window-horizontally)
-(define-key org-mode-map (kbd "S-C-<down>") 'shrink-window)
-(define-key org-mode-map (kbd "S-C-<up>") 'enlarge-window)
+;; Quickly switch windows
+;; (use-package ace-window
+;;   :pretty-hydra
+;;   ((:title (pretty-hydra-title "Window Management" 'faicon "nf-fa-th")
+;;     :foreign-keys warn :quit-key ("q" "C-g"))
+;;    ("Actions"
+;;     (("TAB" other-window "switch")
+;;      ("x" ace-delete-window "delete")
+;;      ("X" ace-delete-other-windows "delete other" :exit t)
+;;      ("s" ace-swap-window "swap")
+;;      ("a" ace-select-window "select" :exit t)
+;;      ("m" toggle-frame-maximized "maximize" :exit t)
+;;      ("u" toggle-frame-fullscreen "fullscreen" :exit t))
+;;     "Resize"
+;;     (("h" shrink-window-horizontally "←")
+;;      ("j" enlarge-window "↓")
+;;      ("k" shrink-window "↑")
+;;      ("l" enlarge-window-horizontally "→")
+;;      ("n" balance-windows "balance"))
+;;     "Split"
+;;     (("r" split-window-right "horizontally")
+;;      ("R" split-window-horizontally-instead "horizontally instead")
+;;      ("v" split-window-below "vertically")
+;;      ("V" split-window-vertically-instead "vertically instead")
+;;      ("t" toggle-window-split "toggle"))
+;;     "Zoom"
+;;     (("+" text-scale-increase "in")
+;;      ("=" text-scale-increase "in")
+;;      ("-" text-scale-decrease "out")
+;;      ("0" (text-scale-increase 0) "reset"))
+;;     "Misc"
+;;     (("o" set-frame-font "frame font")
+;;      ("f" make-frame-command "new frame")
+;;      ("d" delete-frame "delete frame")
+;;      ("<left>" winner-undo "winner undo")
+;;      ("<right>" winner-redo "winner redo"))))
+;;   :custom-face
+;;   (aw-leading-char-face ((t (:inherit font-lock-keyword-face :foreground unspecified :bold t :height 3.0))))
+;;   (aw-minibuffer-leading-char-face ((t (:inherit font-lock-keyword-face :bold t :height 1.0))))
+;;   (aw-mode-line-face ((t (:inherit mode-line-emphasis :bold t))))
+;;   :bind (([remap other-window] . ace-window)
+;;          ("C-c w" . ace-window-hydra/body))
+;;   :hook (emacs-startup . ace-window-display-mode)
+;;   :config
+;;   (defun toggle-window-split ()
+;;     (interactive)
+;;     (if (= (count-windows) 2)
+;;         (let* ((this-win-buffer (window-buffer))
+;;                (next-win-buffer (window-buffer (next-window)))
+;;                (this-win-edges (window-edges (selected-window)))
+;;                (next-win-edges (window-edges (next-window)))
+;;                (this-win-2nd (not (and (<= (car this-win-edges)
+;;                                            (car next-win-edges))
+;;                                        (<= (cadr this-win-edges)
+;;                                            (cadr next-win-edges)))))
+;;                (splitter
+;;                 (if (= (car this-win-edges)
+;;                        (car (window-edges (next-window))))
+;;                     'split-window-horizontally
+;;                   'split-window-vertically)))
+;;           (delete-other-windows)
+;;           (let ((first-win (selected-window)))
+;;             (funcall splitter)
+;;             (if this-win-2nd (other-window 1))
+;;             (set-window-buffer (selected-window) this-win-buffer)
+;;             (set-window-buffer (next-window) next-win-buffer)
+;;             (select-window first-win)
+;;             (if this-win-2nd (other-window 1))))
+;;       (user-error "`toggle-window-split' only supports two windows")))
 
-;; Org pretty, show LaTeX
-;; (org-pretty-entities t)
-
-;; org more directory hyperlink open nautilus
-(setq org-file-apps (cons '(directory . "nautilus file://%s") org-file-apps))
+;;   ;; Bind hydra to dispatch list
+;;   (add-to-list 'aw-dispatch-alist '(?w ace-window-hydra/body) t)
 
 
 
