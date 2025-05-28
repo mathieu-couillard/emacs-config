@@ -425,10 +425,10 @@
 (use-package windmove
   :ensure nil
   :bind*
-  (("S-<left>" . windmove-left)
-   ("S-<right>" . windmove-right)
-   ("S-<up>" . windmove-up)
-   ("S-<down>" . windmove-down)))
+  (("M-<left>" . windmove-left)
+   ("M-<right>" . windmove-right)
+   ("M-<up>" . windmove-up)
+   ("M-<down>" . windmove-down)))
 
 ;; Quickly switch windows
 ;; (use-package ace-window
