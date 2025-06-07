@@ -1,3 +1,13 @@
+; -*- lexical-binding: t; -*-
+;;;;;;;;;;;;;;;;;;;
+;; install on computer the first time you run this
+;; M-x nerd-icons-install-fonts
+;; M-x all-the-icons-install-fonts
+;; pip install "python-lsp-server[all]"
+;; pip install pylsp-mypy pylsp-rope python-lsp-ruff
+;; pip install python-lsp-black
+
+
 ;; Basic UI Configuration ------------------------------------------------------
 
 ;; You will most likely need to adjust this font size for your system!
@@ -46,7 +56,6 @@
                          ("org" . "https://orgmode.org/elpa/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 
-(setq org-image-actual-width nil)
 
 (package-initialize)
 (unless package-archive-contents
@@ -100,18 +109,15 @@
 ;; need to run the following command interactively so that mode line icons
 ;; display correctly:
 ;;
-;; M-x all-the-icons-install-fonts
 
 
-(use-package all-the-icons)
+(use-package nerd-icons)
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 15)))
 
-(use-package doom-themes
-  :init (load-theme 'doom-dracula t))
-;;(load-theme 'wombat t)
+(load-theme 'deeper-blue t)
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -174,8 +180,6 @@
 
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal))
 
@@ -204,7 +208,8 @@
 
 (use-package undo-tree
   :config
-  (global-undo-tree-mode 1))
+  (global-undo-tree-mode 1)
+  (setq undo-tree-auto-save-history nil))
 
 ;; Projectile Configuration ----------------------------------------------------
 
@@ -246,17 +251,23 @@
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
+(setq org-list-allow-alphabetical t
+      org-export-with-toc nil
+      org-image-actual-width nil)
+
+(setq org-hide-emphasis-markers nil)
+
 ;; For org mode to override default
-(define-key org-mode-map (kbd "S-C-<left>") 'shrink-window-horizontally)
-(define-key org-mode-map (kbd "S-C-<right>") 'enlarge-window-horizontally)
-(define-key org-mode-map (kbd "S-C-<down>") 'shrink-window)
-(define-key org-mode-map (kbd "S-C-<up>") 'enlarge-window)
+;; (define-key org-mode-map (kbd "S-C-<left>") 'shrink-window-horizontally)
+;; (define-key org-mode-map (kbd "S-C-<right>") 'enlarge-window-horizontally)
+;; (define-key org-mode-map (kbd "S-C-<down>") 'shrink-window)
+;; (define-key org-mode-map (kbd "S-C-<up>") 'enlarge-window)
 
 ;; Org pretty, show LaTeX
 (setq org-pretty-entities 1)
 
 ;; org more directory hyperlink open nautilus
-(setq org-file-apps (cons '(directory . "nautilus file://%s") org-file-apps))
+;; (setq org-file-apps (cons '(directory . "nautilus file://%s") org-file-apps))
 
 
 ;; babel ----------------------------------------------------------------------
@@ -511,15 +522,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ispell-dictionary nil)
- '(package-selected-packages
-   '(all-the-icons-dired auctex auto-package-update command-log-mode
-			 company-box counsel-projectile dap-mode
-			 dired-hide-dotfiles dired-open doom-modeline
-			 doom-themes eglot evil-collection flycheck
-			 general helpful ivy-rich lsp-ivy lsp-pyright
-			 lsp-ui org-bullets org-onenote ox-reveal
-			 python-mode pyvenv rainbow-delimiters
-			 undo-tree use-package which-key yasnippet)))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
