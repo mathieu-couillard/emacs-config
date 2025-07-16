@@ -21,7 +21,7 @@
        (setq coding-system-for-write 'utf-8-unix)))
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
-(tool-bar-mode -1)          ; Disable the tool
+(tool-bar-mode -1)          ; Disable the toolbar
 (tooltip-mode -1)           ; Disable tooltips
 (set-fringe-mode 10)        ; Give some breathing room
 
@@ -67,7 +67,6 @@
 (require 'use-package)
 (setq use-package-always-ensure t) ;; set this to t if things stop working
 
-;; (package-initialize)
 
 (column-number-mode)
 (global-display-line-numbers-mode t)
@@ -245,15 +244,6 @@
 (use-package yasnippet
   :config
   (yas-global-mode 1))
-
-;; --- Org-mode and Exporters ---
-(use-package org
-  :ensure t ; Ensure org is installed (though usually built-in)
-  :config
-  ;; Your general Org-mode settings go here
-  (setq org-agenda-files '("~/org/agenda.org" "~/org/tasks.org"))
-  (setq org-default-notes-file (expand-file-name "refile.org" org-directory))
-  )
 
 
 ;; Make bullets look nice
