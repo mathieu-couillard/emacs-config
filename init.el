@@ -21,7 +21,7 @@
        (setq coding-system-for-write 'utf-8-unix)))
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
-(tool-bar-mode -1)          ; Disable the toolbar
+(tool-bar-mode -1)          ; Disable the tool
 (tooltip-mode -1)           ; Disable tooltips
 (set-fringe-mode 10)        ; Give some breathing room
 
@@ -53,7 +53,6 @@
 (require 'package)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 
 
@@ -67,6 +66,8 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t) ;; set this to t if things stop working
+
+;; (package-initialize)
 
 (column-number-mode)
 (global-display-line-numbers-mode t)
@@ -245,6 +246,16 @@
   :config
   (yas-global-mode 1))
 
+;; --- Org-mode and Exporters ---
+(use-package org
+  :ensure t ; Ensure org is installed (though usually built-in)
+  :config
+  ;; Your general Org-mode settings go here
+  (setq org-agenda-files '("~/org/agenda.org" "~/org/tasks.org"))
+  (setq org-default-notes-file (expand-file-name "refile.org" org-directory))
+  )
+
+
 ;; Make bullets look nice
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode)
@@ -293,10 +304,10 @@
 
 ;; org-reveal configurations. Make slide show presentations -----------------------------------
 
-(use-package ox-reveal
-  :ensure ox-reveal)
+(use-package ox-reveal)
 (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js")
 (setq org-reveal-mathjax t)
+
 
 
 ;; Spell check  ----------------------------------------------------------------
