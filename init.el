@@ -6,7 +6,7 @@
 ;; pip install "python-lsp-server[all]"
 ;; pip install pylsp-mypy pylsp-rope python-lsp-ruff
 ;; pip install python-lsp-black
-;; name sure there is a folder call ~/roamNotes/
+;; Make sure there is a folder call ~/roamNotes/
 
 ;; Basic UI Configuration ------------------------------------------------------
 
