@@ -6,7 +6,7 @@
 ;; pip install "python-lsp-server[all]"
 ;; pip install pylsp-mypy pylsp-rope python-lsp-ruff
 ;; pip install python-lsp-black
-
+;; name sure there is a folder call ~/roamNotes/
 
 ;; Basic UI Configuration ------------------------------------------------------
 
@@ -20,6 +20,7 @@
        (setq coding-system-for-read 'utf-8-unix)
        (setq coding-system-for-write 'utf-8-unix)))
 
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (tool-bar-mode -1)          ; Disable the toolbar
 (tooltip-mode -1)           ; Disable tooltips
@@ -53,7 +54,7 @@
 (require 'package)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+                         ("gnu" . "https://elpa.gnu.org/packages/")))
 
 
 (package-initialize)
@@ -246,6 +247,107 @@
   (yas-global-mode 1))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                 Org-roam                                 ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package org-roam
+  :ensure t 
+  :init
+  (setq org-roam-v2-ack t)
+  :custom
+  (setq org-roam-directory "~/roamNotes/")
+  (org-roam-completion-everywhere t)
+
+;;   ;; Configure the database backend. SQLite is the default and recommended.
+;;   ;; If you're using a different database, configure it here.
+;;   ;; (setq org-roam-database-config '((:host "localhost" :user "orgroam" ...)))
+
+;;   ;; OPTIONAL: Configure a custom ID function for new Org-roam files.
+;;   ;; The default is a UUID, which is generally good. You might use something
+;;   ;; like a timestamp or a more human-readable ID if you prefer.
+;;   ;; (setq org-roam-capture-new-node-filename "%<%Y%m%d%H%M%S>-${title}.org")
+
+;;   ;; OPTIONAL: Set up Org-roam UI (if you want the graph visualization)
+;;   ;; Requires `org-roam-ui` package.
+;;   (use-package org-roam-ui
+;;     :ensure t
+;;     :after org-roam
+;;     :config
+;;     (setq org-roam-ui-open-on-start nil) ; Don't open UI automatically
+;;     ;; (setq org-roam-ui-sync-theme t)    ; Sync theme with Emacs
+;;     ;; (setq org-roam-ui-browser-function 'eww) ; Use eww for browser (or 'browse-url-default-browser)
+;;     )
+
+  :config
+  (org-roam-setup)
+
+;;   ;; OPTIONAL: Customize capture templates.
+;;   ;; This is a powerful feature for quickly creating new notes.
+;;   ;; Define your templates here.
+;;   (setq org-roam-capture-templates
+;;         '(("d" "default" plain "%?"
+;;            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n")
+;;            :unnarrowed t)
+;;           ("r" "reference" plain "%?"
+;;            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n#+ROAM_TAGS: reference\n")
+;;            :unnarrowed t)
+;;           ("p" "person" plain "%?"
+;;            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n#+ROAM_TAGS: person\n")
+;;            :unnarrowed t)))
+
+;;   ;; OPTIONAL: Configure how links are displayed in Org-roam buffers.
+;;   ;; (setq org-roam-link-display-format '((file . "%s") (id . "%s")))
+
+;;   ;; OPTIONAL: Set up Org-roam completion (e.g., with Vertico, Consult, Ivy, Helm).
+;;   ;; Example for Consult/Vertico:
+;;   (with-eval-after-load 'consult
+;;     (setq org-roam-node-display-template (concat "${title:100} " (propertize "${tags:20}" 'face 'org-tag)))
+;;     (consult-customize
+;;      org-roam-node-read
+;;      :preview-function #'org-roam-preview-node
+;;      :category 'org-roam-node))
+
+  ;; Global keybindings for common Org-roam commands
+  ;; You might want to put these in your general keybinding section.
+  :bind (("C-c n f" . org-roam-node-find)     ; Find a node
+         ("C-c n i" . org-roam-node-insert)    ; Insert a link to a node
+         ("C-c n l" . org-roam-buffer-toggle)  ; Toggle Org-roam buffer (backlinks, etc.)
+         ("C-c n c" . org-roam-capture)        ; Capture a new node
+         ("C-c n g" . org-roam-graph)          ; Open Org-roam graph (if org-roam-ui is not used)
+         ("C-c n t" . org-roam-tag-edit)       ; Edit tags for the current node
+         ("C-c n o" . org-roam-open-node)      ; Open the node at point
+         ;; org-roam-ui specific (if you are using it)
+         ("C-c n u" . org-roam-ui-open)        ; Open Org-roam UI in browser
+	 :map org-mode-map
+	 ("C-M-i"  . completion-at-point)
+         )
+)
+
+;; ;; --- Optional: Further Org-roam Integrations ---
+
+;; ;; If you use `org-ql` for advanced queries of your Org files:
+;; ;; (use-package org-ql-org-roam
+;; ;;   :after (org-ql org-roam)
+;; ;;   :ensure t)
+
+;; ;; If you want to use `org-brain` with `org-roam`:
+;; ;; (use-package org-brain
+;; ;;   :after org-roam
+;; ;;   :ensure t
+;; ;;   :config
+;; ;;   ;; Configure org-brain-directory to point to your org-roam directory
+;; ;;   (setq org-brain-directory org-roam-directory)
+;; ;;   (org-brain-set-config 'org-roam t))
+
+;; ;; Ensure Org-roam is loaded even if you don't use any of the above
+;; ;; This is generally handled by the `:ensure t` in `use-package`.
+;; (provide 'init-org-roam) ; If you put this in a separate file, provide it.
+
+
+
+
+
 ;; Make bullets look nice
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode)
@@ -291,6 +393,11 @@
     (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
     (add-to-list 'org-structure-template-alist '("json" . "src json"))
 
+
+
+;; org ox-latex exporter uses system latex -----------------------------------
+(setenv "PATH" (concat (getenv "PATH") ":/usr/bin/"))
+(add-to-list 'exec-path "/usr/bin")
 
 ;; org-reveal configurations. Make slide show presentations -----------------------------------
 
@@ -523,7 +630,17 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ispell-dictionary nil)
- '(package-selected-packages nil))
+ '(package-selected-packages
+   '(ace-flyspell all-the-icons-dired auctex auto-package-update
+		  command-log-mode company-box counsel-projectile
+		  dap-mode dired-hide-dotfiles dired-open
+		  doom-modeline doom-themes ef-themes eglot
+		  evil-collection exec-path-from-shell flycheck forge
+		  general helpful ivy-rich lsp-ivy lsp-pyright lsp-ui
+		  org-bullets org-onenote org-roam org-roam-ui
+		  ox-reveal pyenv-mode python-mode pyvenv
+		  rainbow-delimiters treemacs treepy undo-tree
+		  use-package visual-fill-column which-key yasnippet)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
