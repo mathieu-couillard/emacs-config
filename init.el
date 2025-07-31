@@ -6,7 +6,10 @@
 ;; pip install "python-lsp-server[all]"
 ;; pip install pylsp-mypy pylsp-rope python-lsp-ruff
 ;; pip install python-lsp-black
-;; Make sure there is a folder call ~/roamNotes/
+;; name sure there is a folder call ~/roamNotes/
+;; install gnupg
+;; generate gpg key 
+;; Make a ~./authinfo.gpg file FROM INSIDE EMACS, if it isn't 
 
 ;; Basic UI Configuration ------------------------------------------------------
 
@@ -16,7 +19,7 @@
 (setq inhibit-startup-message t)
 
 (cond ((eq system-type 'windows-nt)
-       ;; Windows-specific code goes here.     (prefer-coding-system 'utf-8-unix)
+       ;; Windows-specxific code goes here.     (prefer-coding-system 'utf-8-unix)
        (setq coding-system-for-read 'utf-8-unix)
        (setq coding-system-for-write 'utf-8-unix)))
 
@@ -67,6 +70,57 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t) ;; set this to t if things stop working
+
+(use-package auth-source
+    :ensure t
+    :config
+    ;; Set the path to your authinfo file.
+    ;; It's highly recommended to keep this file outside your Emacs config
+    ;; directory (e.g., in ~/.authinfo.gpg or ~/.authinfo) and secure it
+    ;; with appropriate file permissions (e.g., chmod 600).
+    ;; If you want to encrypt it, use authinfo.gpg and GnuPG.
+    (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo"))
+
+    ;; Optionally, set a default expiry for cached passwords (in seconds).
+    ;; This means passwords will be re-queried after this duration.
+    ;; Set to nil for no expiry.
+    (setq auth-source-cache-expiry 28800) ; 8h
+
+    ;; If you use GnuPG for encryption (recommended for .gpg files),
+    ;; ensure Emacs knows how to decrypt.
+    ;; This usually works out of the box if GnuPG is set up correctly,
+    ;; but here's how you might explicitly configure it if needed:
+    ;; (setq epg-pinentry-mode 'loopback) ; Or 'auto, 'gnome3, etc.
+    ;; (setq gpg-program "gpg")
+
+    ;; Example: How to add an entry to your ~/.authinfo.gpg file
+    ;;
+    ;; For encrypted ~/.authinfo.gpg, you would create/edit it with:
+    ;; M-x auth-source-pass-add-entry RET
+    ;; M-x auth-source-pass-edit-entry RET
+    ;;
+    ;; Or manually:
+    ;; gpg --encrypt --recipient your-gpg-key-id ~/.authinfo
+    ;; (Then delete the unencrypted file)
+
+    ;; A simple function to test auth-source (for debugging)
+    (defun my-auth-source-test ()
+    "Test auth-source by retrieving a password for a specific service."
+    (interactive)
+    (let ((auth-info (auth-source-search :host "quantum-memory2.local"
+                                         :user "hqdteam"
+					 :port 22)))
+      (if auth-info
+          ;; auth-source-search returns a list of plists.
+          ;; (car auth-info) gets the first plist.
+          ;; plist-get extracts the value for a given key (e.g., :user, :host, :secret).
+          ;; The secret is a function that needs to be called to get the actual password.
+          (message "Found password for %s@%s: %s"
+                   (plist-get (car auth-info) :user)
+                   (plist-get (car auth-info) :host)
+                   (funcall (plist-get (car auth-info) :secret)))
+        (message "No password found for quantum-memory2.local"))))
+  )
 
 
 (column-number-mode)
@@ -248,7 +302,45 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                                 Org-roam                                 ;;
+;; gptel Configuration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package gptel
+  :ensure t ; Ensures gptel is installed from MELPA
+  :init
+  ;; --- API Key Configuration ---
+  ;; The key will be automatically retrieved from auth-source.
+
+  ;; --- Backend Configuration (Google Gemini) ---
+  ;; Define the backend and store the returned object in a variable.
+  (setq gptel-gemini-backend
+	(gptel-make-gemini "Google Gemini"
+	  :key "AIzaSyA65BqhBggsPNU_Hb3DxREA8GuFvDGDk5U"
+          :models '("gemini-1.5-pro-latest" "gemini-1.5-flash-latest" "gemini-2.5-pro")
+          :stream t))
+
+  ;; Set the default backend to the object we just created.
+  (setq gptel-backend gptel-gemini-backend)
+
+  ;; Now, specify the default model for this backend
+  (setq gptel-default-model "gemini-1.5-pro-latest")
+
+  ;; --- Global Settings ---
+  (setq gptel-system-message
+        "You are a helpful AI assistant integrated into Emacs. Respond concisely and accurately. For code-related queries, provide clear, well-commented code examples.")
+
+  (setq gptel-default-mode 'markdown-mode)
+
+  :config
+  ;; --- Keybindings ---
+  (global-set-key (kbd "C-c g") 'gptel-menu)
+  (global-set-key (kbd "C-c C-g") 'gptel-send)
+  (global-set-key (kbd "C-c r") 'gptel-rewrite)
+  ;; (global-set-key (kbd "C-c C-c") 'gptel-chat)
+  (global-set-key (kbd "C-c a") 'gptel-add-file))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                 Org-roam                                   ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package org-roam
@@ -256,58 +348,22 @@
   :init
   (setq org-roam-v2-ack t)
   :custom
-  (setq org-roam-directory "~/roamNotes/")
+  (org-roam-directory (file-truename "~/roamNotes/"))
   (org-roam-completion-everywhere t)
-
-;;   ;; Configure the database backend. SQLite is the default and recommended.
-;;   ;; If you're using a different database, configure it here.
-;;   ;; (setq org-roam-database-config '((:host "localhost" :user "orgroam" ...)))
-
-;;   ;; OPTIONAL: Configure a custom ID function for new Org-roam files.
-;;   ;; The default is a UUID, which is generally good. You might use something
-;;   ;; like a timestamp or a more human-readable ID if you prefer.
-;;   ;; (setq org-roam-capture-new-node-filename "%<%Y%m%d%H%M%S>-${title}.org")
-
-;;   ;; OPTIONAL: Set up Org-roam UI (if you want the graph visualization)
-;;   ;; Requires `org-roam-ui` package.
-;;   (use-package org-roam-ui
-;;     :ensure t
-;;     :after org-roam
-;;     :config
-;;     (setq org-roam-ui-open-on-start nil) ; Don't open UI automatically
-;;     ;; (setq org-roam-ui-sync-theme t)    ; Sync theme with Emacs
-;;     ;; (setq org-roam-ui-browser-function 'eww) ; Use eww for browser (or 'browse-url-default-browser)
-;;     )
-
-  :config
-  (org-roam-setup)
-
-;;   ;; OPTIONAL: Customize capture templates.
-;;   ;; This is a powerful feature for quickly creating new notes.
-;;   ;; Define your templates here.
-;;   (setq org-roam-capture-templates
-;;         '(("d" "default" plain "%?"
-;;            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n")
-;;            :unnarrowed t)
-;;           ("r" "reference" plain "%?"
-;;            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n#+ROAM_TAGS: reference\n")
-;;            :unnarrowed t)
-;;           ("p" "person" plain "%?"
-;;            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n#+ROAM_TAGS: person\n")
-;;            :unnarrowed t)))
-
-;;   ;; OPTIONAL: Configure how links are displayed in Org-roam buffers.
-;;   ;; (setq org-roam-link-display-format '((file . "%s") (id . "%s")))
-
-;;   ;; OPTIONAL: Set up Org-roam completion (e.g., with Vertico, Consult, Ivy, Helm).
-;;   ;; Example for Consult/Vertico:
-;;   (with-eval-after-load 'consult
-;;     (setq org-roam-node-display-template (concat "${title:100} " (propertize "${tags:20}" 'face 'org-tag)))
-;;     (consult-customize
-;;      org-roam-node-read
-;;      :preview-function #'org-roam-preview-node
-;;      :category 'org-roam-node))
-
+  (org-roam-capture-templates
+	'(("d" "default" plain
+	   "%?" ;; replace this with (file "path/to/file.org")
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n#+date: %U\n")
+	   :unnarrowed t)
+	  ("r" "reference" plain
+	   "%?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n#+ROAM_TAGS: reference\n")
+	   :unnarrowed t)
+	  ("p" "person" plain
+	   "%?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+TITLE: ${title}\n#+ROAM_TAGS: person\n")
+	   :unnarrowed t)))
+  
   ;; Global keybindings for common Org-roam commands
   ;; You might want to put these in your general keybinding section.
   :bind (("C-c n f" . org-roam-node-find)     ; Find a node
@@ -321,29 +377,67 @@
          ("C-c n u" . org-roam-ui-open)        ; Open Org-roam UI in browser
 	 :map org-mode-map
 	 ("C-M-i"  . completion-at-point)
-         )
+	 :map org-roam-dailies-map
+         ("Y" . org-roam-dailies-capture-yesterday)
+         ("T" . org-roam-dailies-capture-tomorrow))
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map)
+  :config
+  (org-roam-setup)
+
+ 
+  ;; --- Org-roam-Dailies Configuration ---
+  (require 'org-roam-dailies)
+;;  (org-roam-dailies-mode) ; Enable org-roam-dailies
+
+  ;; Set the directory for your daily notes. This will be a subdirectory of org-roam-directory.
+  ;; For example, if org-roam-directory is "~/roamNotes/", daily notes will be in "~/roamNotes/dailies/".
+  (setq org-roam-dailies-directory "journal/")
+
+  ;; You can customize the file name format for daily notes if you wish.
+  ;; The default is "%<%Y-%m-%d>.org" which creates files like "2023-10-27.org".
+  ;; (setq org-roam-dailies-capture-filename "%<%Y-%m-%d>.org")
+
+  ;; You can also customize the template used for new daily notes.
+  ;; The `org-roam-capture-templates` entry for "n" (daily) above handles this.
+  ;; If you prefer to set it here, you could do:
+  ;; (setq org-roam-dailies-template
+  ;;       (file+head "%<%Y-%m-%d>.org" "#+TITLE: %<%Y-%m-%d>\n#+ROAM_TAGS: daily\n"))  
 )
 
-;; ;; --- Optional: Further Org-roam Integrations ---
+;; OPTIONAL: Set up Org-roam UI (if you want the graph visualization)
+;; Requires `org-roam-ui` package.
+;;   (use-package org-roam-ui
+;;     :ensure t
+;;     :after org-roam
+;;     :config
+;;     (setq org-roam-ui-open-on-start nil) ; Don't open UI automatically
+;;     ;; (setq org-roam-ui-sync-theme t)    ; Sync theme with Emacs
+;;     ;; (setq org-roam-ui-browser-function 'eww) ; Use eww for browser (or 'browse-url-default-browser)
+;;     )
 
-;; ;; If you use `org-ql` for advanced queries of your Org files:
-;; ;; (use-package org-ql-org-roam
-;; ;;   :after (org-ql org-roam)
-;; ;;   :ensure t)
+;; OPTIONAL: Configure how links are displayed in Org-roam buffers.
+;; (setq org-roam-link-display-format '((file . "%s") (id . "%s")))
 
-;; ;; If you want to use `org-brain` with `org-roam`:
-;; ;; (use-package org-brain
-;; ;;   :after org-roam
-;; ;;   :ensure t
-;; ;;   :config
-;; ;;   ;; Configure org-brain-directory to point to your org-roam directory
-;; ;;   (setq org-brain-directory org-roam-directory)
-;; ;;   (org-brain-set-config 'org-roam t))
+;; OPTIONAL: Set up Org-roam completion (e.g., with Vertico, Consult, Ivy, Helm).
+;; Example for Consult/Vertico:
+;;   (with-eval-after-load 'consult
+;;     (setq org-roam-node-display-template (concat "${title:100} " (propertize "${tags:20}" 'face 'org-tag)))
+;;     (consult-customize
+;;      org-roam-node-read
+;;      :preview-function #'org-roam-preview-node
+;;      :category 'org-roam-node))
 
-;; ;; Ensure Org-roam is loaded even if you don't use any of the above
-;; ;; This is generally handled by the `:ensure t` in `use-package`.
-;; (provide 'init-org-roam) ; If you put this in a separate file, provide it.
 
+
+;; If you want to use `org-brain` with `org-roam`:
+;; (use-package org-brain
+;;   :after org-roam
+;;   :ensure t
+;;   :config
+;;   ;; Configure org-brain-directory to point to your org-roam directory
+;;   (setq org-brain-directory org-roam-directory)
+;;   (org-brain-set-config 'org-roam t))
 
 
 
@@ -636,8 +730,8 @@
 		  dap-mode dired-hide-dotfiles dired-open
 		  doom-modeline doom-themes ef-themes eglot
 		  evil-collection exec-path-from-shell flycheck forge
-		  general helpful ivy-rich lsp-ivy lsp-pyright lsp-ui
-		  org-bullets org-onenote org-roam org-roam-ui
+		  general gptel helpful ivy-rich lsp-ivy lsp-pyright
+		  lsp-ui org-bullets org-onenote org-roam org-roam-ui
 		  ox-reveal pyenv-mode python-mode pyvenv
 		  rainbow-delimiters treemacs treepy undo-tree
 		  use-package visual-fill-column which-key yasnippet)))
