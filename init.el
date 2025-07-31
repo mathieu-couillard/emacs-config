@@ -724,17 +724,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ispell-dictionary nil)
- '(package-selected-packages
-   '(ace-flyspell all-the-icons-dired auctex auto-package-update
-		  command-log-mode company-box counsel-projectile
-		  dap-mode dired-hide-dotfiles dired-open
-		  doom-modeline doom-themes ef-themes eglot
-		  evil-collection exec-path-from-shell flycheck forge
-		  general gptel helpful ivy-rich lsp-ivy lsp-pyright
-		  lsp-ui org-bullets org-onenote org-roam org-roam-ui
-		  ox-reveal pyenv-mode python-mode pyvenv
-		  rainbow-delimiters treemacs treepy undo-tree
-		  use-package visual-fill-column which-key yasnippet)))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
