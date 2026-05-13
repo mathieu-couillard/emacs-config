@@ -1,0 +1,18 @@
+;;; ui-setup.el --- Personal UI configuration  -*- lexical-binding: t; -*-
+
+(defvar runemacs/default-font-size 180
+  "Default font size for the Emacs frame.")
+
+;; Visual Feedback & Spacing
+(set-fringe-mode 10)
+(setq visible-bell t)
+
+;; UI Behavior: Disable line numbers in specific modes
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+(provide 'ui-setup)
+;;; ui-setup.el ends here

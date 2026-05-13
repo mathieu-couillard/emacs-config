@@ -1,0 +1,15 @@
+;;; security-setup.el --- Auth and secrets -*- lexical-binding: t; -*-
+
+(use-package auth-source
+  :ensure t
+  :config
+  (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo"))
+  (setq auth-source-cache-expiry 28800)
+  
+  (defun my-auth-source-test ()
+    "Test auth-source debugging function..."
+    (interactive)
+    ;; ... (the rest of your function code)
+    ))
+
+(provide 'security-setup)
