@@ -14,24 +14,34 @@
 (use-package tex
   :ensure auctex
   :mode ("\\.tex\\'" . LaTeX-mode)
-  :config
-  (setq TeX-auto-save t
-        TeX-parse-self t
-        TeX-PDF-mode t
-        TeX-view-program-selection '((output-pdf "PDF Tools"))
-        TeX-source-correlate-mode t
-        TeX-source-correlate-start-server t)
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-PDF-mode t)
+  (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  (TeX-source-correlate-start-server t)
+  (TeX-fold-auto-update t) ; Ensures new things you type get folded
 
-  :hook ((LaTeX-mode . eglot-ensure) ; Start LSP when opening LaTeX
+  :hook ((LaTeX-mode . eglot-ensure)
          (LaTeX-mode . visual-line-mode)
          (LaTeX-mode . TeX-source-correlate-mode)
-         (LaTeX-mode . TeX-fold-mode)
-	 (LaTeX-mode . variable-pitch-mode)
+         (LaTeX-mode . variable-pitch-mode)
+         (LaTeX-mode . (lambda ()
+                         (require 'tex-fold)
+                         (TeX-fold-mode 1)
+                         ;; Force a refresh of math faces before folding
+                         (font-latex-setup)
+                         (font-lock-flush)
+                         (TeX-fold-buffer)))
          (LaTeX-mode . (lambda () 
                          (add-hook 'TeX-after-compilation-finished-functions
-                                   #'TeX-revert-document-buffer)))))
+                                   #'TeX-revert-document-buffer nil t))))
 
-;; --- Texlab / Eglot Integration ---
+  :config
+  ;; 1. Prevent Eglot from stripping colors (Semantic Tokens)
+  (setq-default eglot-ignored-server-capabilities '(:semanticTokensProvider))
+
+  ;; 2. Your TexLab workspace configuration
   (with-eval-after-load 'eglot
     (setq-default eglot-workspace-configuration
                   (append eglot-workspace-configuration
@@ -41,9 +51,7 @@
                                                 :forwardSearchAfter t)
                                         :forwardSearch (:executable "emacsclient"
                                                         :args ["--no-wait" "+%l" "%f"])
-                                        :chktex (:onOpen t :onEdit t)))))))
-
-
+                                        :chktex (:onOpen t :onEdit t))))))))
 ;; --------------------------------
 ;; Typst
 ;; --------------------------------
