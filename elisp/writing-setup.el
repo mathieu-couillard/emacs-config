@@ -26,6 +26,7 @@
          (LaTeX-mode . visual-line-mode)
          (LaTeX-mode . TeX-source-correlate-mode)
          (LaTeX-mode . TeX-fold-mode)
+	 (LaTeX-mode . variable-pitch-mode)
          (LaTeX-mode . (lambda () 
                          (add-hook 'TeX-after-compilation-finished-functions
                                    #'TeX-revert-document-buffer)))))
@@ -51,7 +52,12 @@
   :vc (:url "https://codeberg.org/meow_king/typst-ts-mode" 
             :rev :head) ; <-- Fixes the (wrong-type-argument stringp nil) error
   :mode "\\.typ\\'"
-  :hook (typst-ts-mode . eglot-ensure)
+  :hook ((typst-ts-mode . eglot-ensure)
+         (typst-ts-mode . variable-pitch-mode)
+	 (typst-ts-mode . visual-line-mode)
+	 (typst-ts-mode . (lambda()
+			    (setq word-wrap t)
+			    (setq truncate-lines nil))))
   :bind (:map typst-ts-mode-map
               ("C-c C-c" . typst-ts-compile)
               ("C-c C-w" . typst-ts-watch-mode)) ;; Toggle save to also compile

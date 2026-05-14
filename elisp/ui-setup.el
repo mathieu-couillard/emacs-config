@@ -1,10 +1,43 @@
 ;;; ui-setup.el --- Personal UI configuration  -*- lexical-binding: t; -*-
 
-(defvar runemacs/default-font-size 100
+(defvar runemacs/default-font-size 120
   "Default font size for the Emacs frame.")
+
+;; IBM Plex Mono, Input narrow Mono
+(defvar runemacs/fixed-pitch-font "IBM Plex Mono"
+  "The font used for code and monospaced text.")
+
+;; Lato, Rufina, Josefin Sans
+(defvar runemacs/variable-pitch-font "Lato"
+  "The font used for prose and writing (variable-pitch).")
 
 ;; Set the font (Actually apply the variable above)
 (set-face-attribute 'default nil :height runemacs/default-font-size)
+
+;; The main font for the editor
+(set-face-attribute 'default nil 
+                    :font runemacs/fixed-pitch-font 
+                    :height runemacs/default-font-size)
+
+;; For code blocks and data tables (always stays monospaced)
+(set-face-attribute 'fixed-pitch nil 
+                    :font runemacs/fixed-pitch-font 
+                    :height 1.0)
+
+;; For "Writing" mode (prose, notes)
+(set-face-attribute 'variable-pitch nil 
+                    :font runemacs/variable-pitch-font 
+                    :height 1.1
+		    :width 'normal)
+
+;; Ensure syntax highlighting stays monospaced in variable-pitch-mode
+(custom-theme-set-faces
+ 'user
+ `(font-lock-comment-face ((t (:inherit fixed-pitch :italic t))))
+ `(font-lock-keyword-face ((t (:inherit fixed-pitch :bold t))))
+ `(font-lock-variable-name-face ((t (:inherit fixed-pitch))))
+ `(font-lock-function-name-face ((t (:inherit fixed-pitch)))))
+
 
 ;; Visual Feedback & Spacing
 (set-fringe-mode 10)        ; Give the text some breathing room

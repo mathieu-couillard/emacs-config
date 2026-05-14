@@ -51,7 +51,8 @@
 (use-package flyspell
   :ensure nil ; Built-in to Emacs
   :hook ((text-mode . flyspell-mode)       ; Spell check for prose (Org, LaTeX, Markdown)
-         (prog-mode . flyspell-prog-mode)) ; Spell check only comments/strings in code
+         (prog-mode . flyspell-prog-mode) ; Spell check only comments/strings in code
+	 (typst-ts-mode . flyspell-mode)) 
   :bind (:map flyspell-mode-map
          ("C-;" . flyspell-correct-wrapper))
   :config
