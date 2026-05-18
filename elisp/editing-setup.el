@@ -3,14 +3,13 @@
 ;; Vim keybindings
 (use-package evil
   :init
-  (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-C-i-jump nil)
   :config
   (evil-mode 1)
   (evil-set-undo-system 'undo-redo)
-  
+
   ;; use instead of escape
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   ;; use instead of backspace
@@ -81,6 +80,8 @@
 (use-package magit
   :bind ("C-x g" . magit-status)   ; The "Magic" shortcut to open the Git status
   :config
+  ;; Fixes the "free variable" warning by setting it only after Magit loads
+  (setq magit-auto-revert-mode t)
   ;; This ensures the status buffer opens in a full window or a logical spot.
   (setq magit-display-buffer-function 
         #'magit-display-buffer-same-window-except-diff-v1))

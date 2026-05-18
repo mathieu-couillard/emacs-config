@@ -27,7 +27,7 @@
 ;; For "Writing" mode (prose, notes)
 (set-face-attribute 'variable-pitch nil 
                     :font runemacs/variable-pitch-font 
-                    :height 1.1
+                    :height 1.2
 		    :width 'normal)
 
 ;; Ensure syntax highlighting stays monospaced in variable-pitch-mode
@@ -38,6 +38,9 @@
  `(font-lock-variable-name-face ((t (:inherit fixed-pitch))))
  `(font-lock-function-name-face ((t (:inherit fixed-pitch)))))
 
+(use-package adaptive-wrap
+  :ensure t
+  :hook (visual-line-mode . adaptive-wrap-prefix-mode))
 
 ;; Visual Feedback & Spacing
 (set-fringe-mode 10)        ; Give the text some breathing room

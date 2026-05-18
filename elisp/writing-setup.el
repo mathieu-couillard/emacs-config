@@ -24,19 +24,26 @@
 
   :hook ((LaTeX-mode . eglot-ensure)
          (LaTeX-mode . visual-line-mode)
-         (LaTeX-mode . TeX-source-correlate-mode)
+         (LaTeX-mode . TeX-source-correlate-mode) ;; live update in pdf-tools
          (LaTeX-mode . variable-pitch-mode)
+         (LaTeX-mode . prettify-symbols-mode) ; Restores the "pretty symbols" look
+         ;; 2. Robust UI initialization (Highlighting & Folding)
          (LaTeX-mode . (lambda ()
                          (require 'tex-fold)
+                         (require 'font-latex)
                          (TeX-fold-mode 1)
-                         ;; Force a refresh of math faces before folding
+                         ;; Initialize AUCTeX font engine before painting
                          (font-latex-setup)
+                         ;; Refresh colors
                          (font-lock-flush)
+                         (font-lock-ensure)
+                         ;; Fold only after font-lock knows what the symbols are
                          (TeX-fold-buffer)))
+         ;; 3. Automatic PDF buffer refresh after compilation
          (LaTeX-mode . (lambda () 
                          (add-hook 'TeX-after-compilation-finished-functions
                                    #'TeX-revert-document-buffer nil t))))
-
+  
   :config
   ;; 1. Prevent Eglot from stripping colors (Semantic Tokens)
   (setq-default eglot-ignored-server-capabilities '(:semanticTokensProvider))
