@@ -1,4 +1,5 @@
-;;; ui-setup.el --- Personal UI configuration  -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; -*-
+;;; ui-setup.el --- Personal UI configuration 
 
 (defvar runemacs/default-font-size 120
   "Default font size for the Emacs frame.")
@@ -29,6 +30,9 @@
                     :font runemacs/variable-pitch-font 
                     :height 1.2
 		    :width 'normal)
+(setq display-line-numbers-grow-only t)
+(setq display-line-numbers-width-start t)
+
 
 ;; Ensure syntax highlighting stays monospaced in variable-pitch-mode
 (custom-theme-set-faces

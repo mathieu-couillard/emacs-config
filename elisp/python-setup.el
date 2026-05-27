@@ -1,5 +1,5 @@
-;;; python-setup.el --- Python Logic & Keys -*- lexical-binding: t; -*-
-
+;; -*- lexical-binding: t; -*-
+;;; python-setup.el --- Python Logic & Keys
 (use-package python
   :ensure nil
   :defer t

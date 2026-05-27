@@ -1,4 +1,5 @@
-;;; package-setup.el --- Package management infrastructure -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; -*-
+;;; package-setup.el --- Package management infrastructure
 
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")

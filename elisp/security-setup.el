@@ -1,4 +1,5 @@
-;;; security-setup.el --- Auth and secrets -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; -*-
+;;; security-setup.el --- Auth and secrets
 
 (use-package auth-source
   :ensure t

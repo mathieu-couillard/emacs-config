@@ -1,4 +1,5 @@
-;;; completion-setup.el --- Corfu + Yasnippet -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; -*-
+;;; completion-setup.el --- Corfu + Yasnippet
 
 ;; Auto-complete front end. Drop down menu
 (use-package corfu

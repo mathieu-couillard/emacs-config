@@ -1,4 +1,5 @@
-;;; navigation-setup.el --- navigation infrastructure -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; -*-
+;;; navigation-setup.el --- navigation infrastructure
 
 
 ;; =============================================================================

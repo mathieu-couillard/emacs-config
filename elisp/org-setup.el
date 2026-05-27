@@ -1,4 +1,5 @@
-;;; org-setup.el --- Personal Knowledge Management -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; -*-
+;;; org-setup.el --- Personal Knowledge Management
 
 (use-package org
   :ensure t

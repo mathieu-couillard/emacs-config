@@ -115,9 +115,6 @@
   :mode "\\.typ\\'"
   :hook ((typst-ts-mode . eglot-ensure)
          (typst-ts-mode . flymake-mode) 
-	 ;; (typst-ts-mode . guess-language-mode)
-	 ;; (typst-ts-mode . flyspell-mode)
-         ;; (typst-ts-mode . variable-pitch-mode)
          ;; (typst-ts-mode . visual-line-mode)
          (typst-ts-mode . (lambda ()
                             (setq word-wrap t)

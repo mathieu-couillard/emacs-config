@@ -1,6 +1,8 @@
-;;; editing-setup.el --- navigation infrastructure -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; -*-
+;;; editing-setup.el --- navigation infrastructure
 
 ;; Vim keybindings
+(setq evil-want-keybinding nil)
 (use-package evil
   :init
   (setq evil-want-keybinding nil)
@@ -14,7 +16,9 @@
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   ;; use instead of backspace
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
-
+  (define-key evil-insert-state-map (kbd "<end>")
+	      (lambda () (interactive) (evil-end-of-visual-line) (forward-char)))
+  (define-key evil-insert-state-map (kbd "<home>") 'evil-beginning-of-visual-line)
   ;; hjkl navigation in Insert Mode
   (define-key evil-insert-state-map (kbd "M-h") 'backward-char)
   (define-key evil-insert-state-map (kbd "M-j") 'evil-next-visual-line)
@@ -50,8 +54,7 @@
 (use-package flyspell
   :ensure nil ; Built-in to Emacs
   :hook ((text-mode . flyspell-mode)       ; Spell check for prose (Org, LaTeX, Markdown)
-         (prog-mode . flyspell-prog-mode) ; Spell check only comments/strings in code
-	 (typst-ts-mode . flyspell-mode)) 
+         (prog-mode . flyspell-prog-mode)) ; Spell check only comments/strings in code
   :bind (:map flyspell-mode-map
          ("C-;" . flyspell-correct-wrapper))
   :config
