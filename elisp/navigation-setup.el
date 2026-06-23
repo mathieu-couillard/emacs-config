@@ -95,24 +95,13 @@
   :bind (("C-x C-j" . dired-jump))
   :custom ((dired-listing-switches "-agho --group-directories-first"))
   :config
-  (evil-collection-define-key 'normal 'dired-mode-map
-    "h" 'dired-single-up-directory
-    "l" 'dired-single-buffer))
+  (put 'dired-find-alternate-file 'disabled nil)
+  (with-eval-after-load 'evil-collection
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "h" 'dired-up-directory
+      "l" 'dired-find-alternate-file)))
 
-;; (use-package dired
-;;   :ensure nil
-;;   :commands (dired dired-jump)
-;;   :bind (("C-x C-j" . dired-jump))
-;;   :custom ((dired-listing-switches "-agho --group-directories-first")))
 
-;; (use-package dired-single
-;;   :after dired
-;;   :ensure t
-;;   :config
-;;   ;; Bind directly to the map. This is safer and faster.
-;;   (evil-define-key 'normal dired-mode-map
-;;     "h" 'dired-single-up-directory
-;;     "l" 'dired-single-buffer))
 
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
@@ -179,7 +168,11 @@
   (("M-<left>" . windmove-left)
    ("M-<right>" . windmove-right)
    ("M-<up>" . windmove-up)
-   ("M-<down>" . windmove-down)))
+   ("M-<down>" . windmove-down)
+   ("M-C-<left>" . windmove-swap-states-left)
+   ("M-C-<right>" . windmove-swap-states-right)
+   ("M-C-<up>" . windmove-swap-states-up)
+   ("M-C-<down>" . windmove-swap-states-down)))
 
 (provide 'navigation-setup)
 ;;; navigation-setup.el ends here

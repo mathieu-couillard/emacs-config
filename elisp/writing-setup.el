@@ -25,21 +25,17 @@
 
   :hook ((LaTeX-mode . eglot-ensure)
 	 (LaTeX-mode . flyspell-mode)
-         ;; (LaTeX-mode . visual-line-mode)
+         (LaTeX-mode . visual-line-mode)
          (LaTeX-mode . TeX-source-correlate-mode) ;; live update in pdf-tools
-         ;; (LaTeX-mode . variable-pitch-mode)
-         (LaTeX-mode . prettify-symbols-mode) ; Restores the "pretty symbols" look
+         (LaTeX-mode . prettify-symbols-mode); Restores the "pretty symbols" look
          ;; 2. Robust UI initialization (Highlighting & Folding)
-         (LaTeX-mode . (lambda ()
+         (LaTeX-mode . (lambda () ;; this ensure the pretty math symbols stay pretty
                          (require 'tex-fold)
                          (require 'font-latex)
                          (TeX-fold-mode 1)
-                         ;; Initialize AUCTeX font engine before painting
                          (font-latex-setup)
-                         ;; Refresh colors
                          (font-lock-flush)
                          (font-lock-ensure)
-                         ;; Fold only after font-lock knows what the symbols are
                          (TeX-fold-buffer)))
          ;; 3. Automatic PDF buffer refresh after compilation
          (LaTeX-mode . (lambda () 
@@ -55,69 +51,24 @@
     (setq-default eglot-workspace-configuration
                   (append eglot-workspace-configuration
                           '((:texlab . (:build (:executable "latexmk"
-                                                :args ["-pdf" "-interaction=nonstopmode" "-synctex=1" "%f"]
-                                                :onSave t
-                                                :forwardSearchAfter t)
-                                        :forwardSearch (:executable "emacsclient"
-                                                        :args ["--no-wait" "+%l" "%f"])
-                                        :chktex (:onOpen t :onEdit t))))))))
-;; ;; --------------------------------
-;; ;; Latex
-;; ;; --------------------------------
-;; (use-package tex
-;;   :ensure auctex
-;;   :mode ("\\.tex\\'" . LaTeX-mode)
-;;   :custom
-;;   (TeX-auto-save t)
-;;   (TeX-parse-self t)
-;;   (TeX-PDF-mode t)
-;;   (TeX-view-program-selection '((output-pdf "PDF Tools")))
-;;   (TeX-source-correlate-start-server t)
-;;   (TeX-fold-auto-update t)
-
-;;   :hook ((LaTeX-mode . eglot-ensure)
-;;          (LaTeX-mode . visual-line-mode)
-;;          (LaTeX-mode . TeX-source-correlate-mode)
-;;          (LaTeX-mode . variable-pitch-mode)
-;;          (LaTeX-mode . prettify-symbols-mode)
-;;          (LaTeX-mode . (lambda ()
-;;                           (require 'tex-fold)
-;;                           (require 'font-latex)
-;;                           (TeX-fold-mode 1)
-;;                           (font-latex-setup)
-;;                           (font-lock-flush)
-;;                           (font-lock-ensure)
-;;                           (TeX-fold-buffer)))
-;;          (LaTeX-mode . (lambda () 
-;;                           (add-hook 'TeX-after-compilation-finished-functions
-;;                                     #'TeX-revert-document-buffer nil t))))
-  
-;;   :config
-;;   (setq-default eglot-ignored-server-capabilities '(:semanticTokensProvider))
-
-;;   (with-eval-after-load 'eglot
-;;     (setq-default eglot-workspace-configuration
-;;                   (append eglot-workspace-configuration
-;;                           '((:texlab . (:build (:executable "latexmk"
-;;                                                 :args ["-pdf" "-interaction=nonstopmode" "-synctex=1" "%f"]
-;;                                                 :onSave t
-;;                                                 :forwardSearchAfter t)
-;;                                         :forwardSearch (:executable "emacsclient"
-;;                                                         :args ["--no-wait" "+%l" "%f"])
-;;                                         :chktex (:onOpen t :onEdit t))))))))
+							    :args ["-pdf" "-interaction=nonstopmode" "-synctex=1" "%f"]
+							    :onSave t
+							    :forwardSearchAfter t)
+                                               :forwardSearch (:executable "emacsclient"
+									   :args ["--no-wait" "+%l" "%f"])
+                                               :chktex (:onOpen t :onEdit t))))))))
 
 ;; --------------------------------
 ;; Typst
 ;; --------------------------------
 (use-package typst-ts-mode
+  :ensure t
   :vc (:url "https://codeberg.org/meow_king/typst-ts-mode" 
-       :rev :head)
+	    :rev :head)
   :mode "\\.typ\\'"
   :hook ((typst-ts-mode . eglot-ensure)
          (typst-ts-mode . flymake-mode) 
-	 ;; (typst-ts-mode . guess-language-mode)
-	 ;; (typst-ts-mode . flyspell-mode)
-         ;; (typst-ts-mode . variable-pitch-mode)
+         (typst-ts-mode . typst-ts-watch-mode) 
          ;; (typst-ts-mode . visual-line-mode)
          (typst-ts-mode . (lambda ()
                             (setq word-wrap t)
@@ -135,7 +86,6 @@
               ("C-c C-c" . typst-ts-compile)
               ("C-c C-w" . typst-ts-watch-mode)) 
   :custom
-  ;; Tip: Swap "--open" for system-independent compilation window stability
   (typst-ts-mode-watch-options '("--open"))
   
   :config

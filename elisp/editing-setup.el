@@ -13,7 +13,7 @@
   (evil-set-undo-system 'undo-redo)
 
   ;; use instead of escape
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-i") 'evil-normal-state)
   ;; use instead of backspace
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
   (define-key evil-insert-state-map (kbd "<end>")
@@ -56,7 +56,7 @@
   :hook ((text-mode . flyspell-mode)       ; Spell check for prose (Org, LaTeX, Markdown)
          (prog-mode . flyspell-prog-mode)) ; Spell check only comments/strings in code
   :bind (:map flyspell-mode-map
-         ("C-;" . flyspell-correct-wrapper))
+              ("C-;" . flyspell-correct-wrapper))
   :config
   ;; Use aspell for better performance and dictionary support
   (setq ispell-program-name "aspell"
@@ -77,7 +77,7 @@
   ;; Trigger flyspell update immediately upon language detection
   (add-hook 'guess-language-after-detection-functions
             (lambda (lang _begin _end)
-              (ispell-change-dictionary (car (assoc lang guess-language-langcodes))))))
+              (ispell-change-dictionary (cadr (assoc lang guess-language-langcodes))))))
 
 ;; Version control
 (use-package magit

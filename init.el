@@ -1,4 +1,4 @@
-;;; -*- lexical-binding: t; -*-
+;; -*- lexical-binding: t; -*-
 ;; Add elisp folder to load-path
 (add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
 

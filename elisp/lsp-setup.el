@@ -5,7 +5,7 @@
   :ensure nil ; Built-in in Emacs 29+
   :config
   (setq treesit-language-source-alist
-        '((python "https://github.com/tree-sitter/tree-sitter-python")
+        '((python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.6")
           (typst "https://github.com/uben0/tree-sitter-typst")
           (bash "https://github.com/tree-sitter/tree-sitter-bash")
           (yaml "https://github.com/tree-sitter/tree-sitter-yaml")))
@@ -16,30 +16,42 @@
           (bash-mode . bash-ts-mode)
           (typst-mode . typst-ts-mode))))
 
+
 (use-package eglot
-  :ensure nil
+  :ensure t
+  :defer t
   :bind (:map eglot-mode-map
-              ("M-." . xref-find-definitions)
-              ("M-," . pop-tag-mark))
+              ("C-c C-d" . eldoc)
+              ("C-c C-e" . eglot-rename))
   :config
-  ;; 1. Cleanly push all your custom servers onto the program list
-  (setq eglot-server-programs
-        (append '((latex-mode                  . ("texlab"))
-                  (typst-ts-mode              . ("tinymist" "lsp"))
-                  ((python-mode python-ts-mode) . ("pyright-langserver" "--stdio"))
-                  ((python-mode python-ts-mode) . ("ruff" "server")))
-                eglot-server-programs))
-
-  ;; This tells the backend to turn on spellchecking for both English and French
-  (setq-default eglot-workspace-configuration
-                '((:tinymist . (:exportPdf "onSave"
-                                :formatterMode "typstfmt"
-                                :spellcheck (:language "en-US"
-                                             :dictionaries [])))))
-
-  ;; Suppress noisy capability mismatches from flooding your view
-  (setq eglot-ignored-server-capabilities '(:workspace/didChangeConfiguration)))
+  ;; Cap connection timeout at 5 seconds so a failing server never deadlocks your UI
+  (setq eglot-connect-timeout 5)
   
+  ;; Suppress noisy capability mismatches from flooding your view
+  (setq eglot-ignored-server-capabilities 
+        '(:workspace/didChangeConfiguration :documentFormattingProvider))
+
+  ;; Global workspace configurations for non-python tools
+  (setq-default eglot-workspace-configuration
+                '((tinymist . (:exportPdf "onSave"
+					  :formatterMode "typstfmt"
+					  :spellcheck (:language "en-US,fr"
+								 :dictionaries []))))))
+
+(use-package apheleia
+  :ensure t
+  :init
+  (apheleia-global-mode +1)
+  :config
+  ;; --- Python Configuration ---
+  (setf (alist-get 'python-ts-mode apheleia-mode-alist) 'ruff)
+
+  ;; --- Typst Configuration ---
+  ;; 1. Define how to call the typstyle CLI
+  (setf (alist-get 'typstyle apheleia-formatters) '("typstyle"))
+  ;; 2. Map the major mode to the formatter definition
+  (setf (alist-get 'typst-ts-mode apheleia-mode-alist) 'typstyle))
+
 (use-package flymake
   :ensure nil
   :bind (:map flymake-mode-map
