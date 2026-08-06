@@ -72,14 +72,31 @@
   (setq guess-language-languages '(en fr)
         guess-language-langcodes '((en "en_US" "English")
                                    (fr "fr_FR" "French"))
-        guess-language-min-paragraph-length 30)
-  
-  ;; Trigger flyspell update immediately upon language detection
+        guess-language-min-paragraph-length 30
+        ;; Tell guess-language to automatically control flyspell:
+        guess-language-use-it '(flyspell))
+  (setq default-input-method "french-postfix")
   (add-hook 'guess-language-after-detection-functions
-            (lambda (lang _begin _end)
-              (ispell-change-dictionary (cadr (assoc lang guess-language-langcodes))))))
+            (lambda (lang &rest _)
+              (if (eq lang 'fr)
+                  (activate-input-method "french-postfix")
+                (deactivate-input-method)))))
 
-;; Version control
+;; (use-package guess-language
+;;   :ensure t
+;;   :hook (text-mode . guess-language-mode)
+;;   :config
+;;   (setq guess-language-languages '(en fr)
+;;         guess-language-langcodes '((en "en_US" "English")
+;;                                    (fr "fr_FR" "French"))
+;;         guess-language-min-paragraph-length 30)
+
+;;   ;; Trigger flyspell update immediately upon language detection
+;;   (add-hook 'guess-language-after-detection-functions
+;;             (lambda (lang _begin _end)
+;;               (ispell-change-dictionary (cadr (assoc lang guess-language-langcodes))))))
+
+;; ;; Version control
 (use-package magit
   :bind ("C-x g" . magit-status)   ; The "Magic" shortcut to open the Git status
   :config
