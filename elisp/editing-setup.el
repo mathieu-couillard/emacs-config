@@ -106,6 +106,13 @@
   (setq magit-display-buffer-function 
         #'magit-display-buffer-same-window-except-diff-v1))
 
+;; Automatically update files and directories
+(use-package autorevert
+  :ensure nil
+  :custom
+  (global-auto-revert-non-file-buffers t)
+  :config
+  (global-auto-revert-mode 1))
 
 (provide 'editing-setup)
 ;;; editing-setup.el ends here

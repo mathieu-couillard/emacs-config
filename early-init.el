@@ -1,3 +1,4 @@
+;;; early-init.el --- Early init -*- lexical-binding: t; -*-
 
 ;; 1. UI elements: Use the alist method for the cleanest start
 (push '(menu-bar-lines . 0) default-frame-alist)

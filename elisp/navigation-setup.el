@@ -66,6 +66,26 @@
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 ;; =============================================================================
+;; 2. Ripgrep
+;; =============================================================================
+
+(use-package grep
+  :ensure nil
+  :config
+  (grep-apply-setting 'grep-command "rg -nH --no-heading --color=never ")
+  (setq grep-use-null-device nil))
+
+(use-package xref
+  :ensure nil
+  :custom
+  (xref-search-program 'ripgrep))
+
+(use-package rg
+  :ensure t)
+
+
+
+;; =============================================================================
 ;; 2. Project Management (Projectile)
 ;; =============================================================================
 
@@ -82,7 +102,10 @@
 
 ;; 2. Load the "Bridge" (Counsel + Projectile)
 (use-package counsel-projectile
-  :config (counsel-projectile-mode))
+  :config
+  (counsel-projectile-mode)
+  (define-key projectile-mode-map [remap projectile-grep] #'projectile-ripgrep)
+  )
 
 
 ;; =============================================================================
@@ -93,14 +116,17 @@
   :ensure nil
   :commands (dired dired-jump)
   :bind (("C-x C-j" . dired-jump))
-  :custom ((dired-listing-switches "-agho --group-directories-first"))
+  :custom 
+  (dired-listing-switches 
+   (if (eq system-type 'darwin)
+       "-agho"                              ;; macOS (BSD ls compatible)
+     "-agho --group-directories-first"))    ;; Linux / Windows
   :config
   (put 'dired-find-alternate-file 'disabled nil)
   (with-eval-after-load 'evil-collection
     (evil-collection-define-key 'normal 'dired-mode-map
       "h" 'dired-up-directory
       "l" 'dired-find-alternate-file)))
-
 
 
 (use-package all-the-icons-dired
@@ -130,7 +156,7 @@
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-; Keybinding manager 
+					; Keybinding manager 
 (use-package general
   :config
   (general-create-definer rune/leader-keys

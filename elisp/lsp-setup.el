@@ -8,13 +8,14 @@
         '((python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.6")
           (typst "https://github.com/uben0/tree-sitter-typst")
           (bash "https://github.com/tree-sitter/tree-sitter-bash")
-          (yaml "https://github.com/tree-sitter/tree-sitter-yaml")))
+          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml")))
   
   ;; Automatically use the -ts- modes for these languages
   (setq major-mode-remap-alist
         '((python-mode . python-ts-mode)
           (bash-mode . bash-ts-mode)
-          (typst-mode . typst-ts-mode))))
+          (typst-mode . typst-ts-mode)
+          (yaml-mode . yaml-ts-mode))))
 
 
 (use-package eglot
@@ -51,6 +52,22 @@
   (setf (alist-get 'typstyle apheleia-formatters) '("typstyle"))
   ;; 2. Map the major mode to the formatter definition
   (setf (alist-get 'typst-ts-mode apheleia-mode-alist) 'typstyle))
+
+;; (use-package apheleia
+;;   :ensure t
+;;   :init
+;;   (apheleia-global-mode +1)
+;;   :config
+;;   ;; Override ruff to use the correct --quiet flag instead of --silent
+;;   (setf (alist-get 'ruff apheleia-formatters)
+;;         '("ruff" "format" "--quiet" "--stdin-filename" filepath "-"))
+
+;;   ;; --- Python Configuration ---
+;;   (setf (alist-get 'python-ts-mode apheleia-mode-alist) 'ruff)
+
+;;   ;; --- Typst Configuration ---
+;;   (setf (alist-get 'typstyle apheleia-formatters) '("typstyle"))
+;;   (setf (alist-get 'typst-ts-mode apheleia-mode-alist) 'typstyle))
 
 (use-package flymake
   :ensure nil

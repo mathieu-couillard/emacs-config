@@ -1,6 +1,14 @@
 ;; -*- lexical-binding: t; -*-
+
+;; Define where the auto-generated "Customize" settings go
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
 ;; Add elisp folder to load-path
 (add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
+
+;; Load it if it exists, but don't complain if it doesn't
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 ;; System/Encoding settings (Keep here)
 (when (eq system-type 'windows-nt)
@@ -22,14 +30,7 @@
 (require 'org-setup)
 (require 'writing-setup)
 (require 'python-setup)
-
-
-;; Define where the auto-generated "Customize" settings go
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-
-;; Load it if it exists, but don't complain if it doesn't
-(when (file-exists-p custom-file)
-  (load custom-file))
+(require 'yaml-setup)
 
 (defun mc/first-run-setup ()
   "Install all fonts and external dependencies for a new setup."
@@ -39,20 +40,3 @@
   (async-shell-command "pip install \"python-lsp-server[all]\" python-lsp-ruff ruff")
   (make-directory "~/roamNotes/" t)
   (message "First-run setup complete! Please install the fonts from the folders that opened."))
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-vc-selected-packages
-   '((typst-ts-mode :url "https://codeberg.org/meow_king/typst-ts-mode"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(font-lock-comment-face ((t (:inherit fixed-pitch :italic t))))
- '(font-lock-function-name-face ((t (:inherit fixed-pitch))))
- '(font-lock-keyword-face ((t (:inherit fixed-pitch :bold t))))
- '(font-lock-variable-name-face ((t (:inherit fixed-pitch)))))
